@@ -1,0 +1,2 @@
+# exponential-memory-kernel
+指數記憶核作為Volterra因果半群生成子之穩定固定點的結構性結果
