@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cmcc.invalid/schema/message-v0.2.json",
+  "title": "CMCC v0.2 Message",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "message_id",
+    "in_reply_to",
+    "sender",
+    "timestamp",
+    "phase",
+    "status",
+    "content"
+  ],
+  "properties": {
+    "message_id": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^CMCC-MSG-[0-9]{4,}$"
+    },
+    "in_reply_to": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "sender": {
+      "type": "string",
+      "minLength": 1
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "phase": {
+      "enum": [
+        "independent",
+        "cross_examine",
+        "revise",
+        "ack"
+      ]
+    },
+    "status": {
+      "enum": [
+        "sent",
+        "delivered",
+        "replied",
+        "acked",
+        "closed"
+      ]
+    },
+    "content": {
+      "type": "string"
+    },
+    "checksum": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^(sha256:)?[a-fA-F0-9]{64}$"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "phase": {
+            "const": "independent"
+          }
+        },
+        "required": [
+          "phase"
+        ]
+      },
+      "then": {
+        "properties": {
+          "in_reply_to": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "phase": {
+            "enum": [
+              "cross_examine",
+              "revise",
+              "ack"
+            ]
+          }
+        },
+        "required": [
+          "phase"
+        ]
+      },
+      "then": {
+        "properties": {
+          "in_reply_to": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  ]
+}
